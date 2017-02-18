@@ -32,7 +32,7 @@
 	var img = new Image;
 	img.src = "5355fd144740b.png";
 	img.onload = function() {
-		setInterval("draw()",200);
+		setInterval("draw()",50);
 	}
 	var kindImg = [
 		[3453, 4074, 0, 637], // fx, tx, fy, ty
@@ -48,7 +48,7 @@
 		[1530, 2300, 2057, 2237] // monster 8
 	];
 	var elems = [];
-	addElem(0, 137.5, 420, 25, 25, 5, 5);
+	addElem(0, 137.5, 420, 25, 25, 5, 0);
 	addElem(3, 0, 0, 25, 25, 5, 5);
 	function draw() {
 		//draw
@@ -114,10 +114,11 @@
 			"shootInterval": 10,
 			AI: function(){
 				if (this.kind == 0) {// if this is the ship
-					checkFx = this.pos.x-20;
+					checkFx = this.pos.x+20*this.speed.dx/Math.abs(this.speed.dx);
 					checkFy = this.pos.y-20;
 					checkTx = this.pos.x+this.pos.width;
 					checkTy = this.pos.y+this.pos.height;
+
 					safeFlag = true;
 					for (ii in elems) {
 						if (elems[ii].kind == 0 || elems[ii].kind == 1)
@@ -131,11 +132,13 @@
 							}
 						}
 					}
+					if (this.pos.x < 0 || this.pos.x+this.pos.width > c.clientWidth)
+						safeFlag = false;
 					if (safeFlag){
-						this.speed.dx = -Math.abs(this.speed.dx);
+						//this.speed.dx = -Math.abs(this.speed.dx);
 						return;
 					}
-					checkFx = this.pos.x+20;
+					checkFx = this.pos.x-20*this.speed.dx/Math.abs(this.speed.dx);
 					checkFy = this.pos.y-20;
 					checkTx = this.pos.x+this.pos.width;
 					checkTy = this.pos.y+this.pos.height;
@@ -152,8 +155,9 @@
 							}
 						}
 					}
+					console.log(safeFlag);
 					if (safeFlag){
-						this.speed.dx = Math.abs(this.speed.dx);
+						this.speed.dx = -this.speed.dx;
 						return;
 					}
 				}
@@ -165,17 +169,9 @@
 
 				this.pos.x += this.speed.dx;
 				this.pos.y += this.speed.dy;
-				// if (this.kind == 0){
-				// 	console.log("speed: "+this.speed.dx);
-				// 	console.log("x: "+this.pos.x);
-				// }
 				switch(this.kind) {
-					// case 0: // ship
-					// 	if (this.pos.x < 0 || (c.clientWidth-this.pos.width-this.pos.x) < 0)
-					// 		this.speed.dx = -this.speed.dx;
-					// 	if (this.pos.y < 0 || (c.clientHeight-this.pos.height-this.pos.y) < 0)
-					// 		this.speed.dy = -this.speed.dy;
-					// 	break;
+					case 0: 
+						break;
 					case 1: // bullet
 						if (this.pos.x < 0 || (c.clientWidth-this.pos.width-this.pos.x) < 0
 							|| this.pos.y < 0 || (c.clientHeight-this.pos.height-this.pos.y) < 0)
@@ -193,10 +189,6 @@
 							this.speed.dy = -this.speed.dy;
 
 				}
-				// if (this.kind == 0){
-				// 	console.log(" aa speed: "+this.speed.dx);
-				// 	console.log(" aa x: "+this.pos.x);
-				// }
 			},
 			shoot: function(){
 				this.shootInterval--;
