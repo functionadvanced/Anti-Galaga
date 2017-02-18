@@ -35,9 +35,12 @@
 	img.onload = function() {
 		setInterval("draw()",100);
 	}
+	var kindImg = [
+		[223, 974, 0, 637], // fx, tx, fy, ty
+	];
 	var elems = [
 		{
-			"imgPos": [223, 974, 0, 637], // fx, tx, fy, ty
+			"kind": 0,
 			"pos": {
 				x: 0,
 				y: 0,
@@ -46,20 +49,43 @@
 			}
 		}
 	];
-	for (i in elems) {
-		elems[i].imgWidth = elems[i].imgPos[1] - elems[i].imgPos[0];
-		elems[i].imgHeight = elems[i].imgPos[3] - elems[i].imgPos[2];
-	}
+	addElem(0, 50, 50, 50, 50);
 	function draw() {
-		elems[0].pos.x += 10;
-		elems[0].pos.x %= 300;
+		// elems[0].pos.x += 10;
+		// elems[0].pos.x %= 300;
+		// cxt.clearRect(0, 0, 300, 500);
+		// showElem(0);
+		//showElem(1);
 		cxt.clearRect(0, 0, 300, 500);
-		showElem(0);
+		for (i in elems) {
+			showElem(i);
+		}
 		
 	}
 	function showElem(_which) {
-		cxt.drawImage(img, elems[_which].imgPos[0], elems[_which].imgPos[2], elems[_which].imgWidth, elems[_which].imgHeight, elems[_which].pos.x, elems[_which].pos.y, elems[_which].pos.width, elems[_which].pos.height);
+		cxt.drawImage(img, 
+			kindImg[elems[_which].kind][0],
+			kindImg[elems[_which].kind][2], 
+			kindImg[elems[_which].kind][1]-kindImg[elems[_which].kind][0],
+			kindImg[elems[_which].kind][1]-kindImg[elems[_which].kind][0],
+			elems[_which].pos.x, elems[_which].pos.y, elems[_which].pos.width, elems[_which].pos.height);
 	}
+	function addElem(_kind, _x, _y, _width, _height) {
+		temp = {
+			"kind": _kind,
+			"pos": {
+				x: _x,
+				y: _y,
+				width: _width,
+				height: _height
+			}
+		};
+		elems.push(temp);
+	}
+	function delElem(_which) {
+		elems.splice(_which, 1);
+	}
+
 </script>
 </body>
 </html>
