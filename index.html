@@ -32,7 +32,7 @@
 	var img = new Image;
 	img.src = "5355fd144740b.png";
 	img.onload = function() {
-		setInterval("draw()",50);
+		setInterval("draw()",200);
 	}
 	var kindImg = [
 		[3453, 4074, 0, 637], // fx, tx, fy, ty
@@ -49,7 +49,8 @@
 	];
 	var elems = [];
 	addElem(0, 137.5, 420, 25, 25, 5, 0);
-	addElem(3, 0, 0, 25, 25, 5, 5);
+	addElem(3, 100, 0, 25, 25, 0, 0);
+	//addElem(2, 100, 390, 5, 5, 0, 0);
 	function draw() {
 		//draw
 		cxt.clearRect(0, 0, c.clientWidth, c.clientHeight);
@@ -111,22 +112,25 @@
 				dy: _dy
 			},
 			"delFlag": false,
-			"shootInterval": 10,
+			"shootInterval": 5,
 			AI: function(){
 				if (this.kind == 0) {// if this is the ship
-					checkFx = this.pos.x+20*this.speed.dx/Math.abs(this.speed.dx);
-					checkFy = this.pos.y-20;
-					checkTx = this.pos.x+this.pos.width;
+					checkFx = this.pos.x+40*this.speed.dx/Math.abs(this.speed.dx);
+					checkFy = this.pos.y-60;
+					checkTx = this.pos.x+this.pos.width/2+10*this.speed.dx/Math.abs(this.speed.dx);
 					checkTy = this.pos.y+this.pos.height;
 
 					safeFlag = true;
 					for (ii in elems) {
 						if (elems[ii].kind == 0 || elems[ii].kind == 1)
 							continue;
-						if ((elems[ii].pos.x > checkFx && elems[ii].pos.x < checkTx)
-							||(elems[ii].pos.x+elems[ii].pos.width > checkFx && elems[ii].pos.x+elems[ii].pos.width < checkTx)){
-							if ((elems[ii].pos.y > checkFy && elems[ii].pos.y < checkTy)
-								||(elems[ii].pos.y+elems[ii].pos.height > checkFy && elems[ii].pos.y+elems[ii].pos.height < checkTy)){
+						temp1 = elems[ii].pos.x+elems[ii].pos.width/2 - checkFx;
+						temp2 = elems[ii].pos.x+elems[ii].pos.width/2 - checkTx;
+						temp3 = elems[ii].pos.y+elems[ii].pos.height/2 - checkFy;
+						temp4 = elems[ii].pos.y+elems[ii].pos.height/2 - checkTy;
+						console.log("1: "+temp1+" 2: "+temp2+" 3: "+temp3+" 4: "+temp4);
+						if (temp1 * temp2 < 0){
+							if (temp3 * temp4 < 0){
 								safeFlag = false;
 								break;
 							}
@@ -138,18 +142,20 @@
 						//this.speed.dx = -Math.abs(this.speed.dx);
 						return;
 					}
-					checkFx = this.pos.x-20*this.speed.dx/Math.abs(this.speed.dx);
-					checkFy = this.pos.y-20;
-					checkTx = this.pos.x+this.pos.width;
+					checkFx = this.pos.x-40*this.speed.dx/Math.abs(this.speed.dx);
+					checkFy = this.pos.y-60;
+					checkTx = this.pos.x+this.pos.width/2-10*this.speed.dx/Math.abs(this.speed.dx);
 					checkTy = this.pos.y+this.pos.height;
 					safeFlag = true;
 					for (ii in elems) {
 						if (elems[ii].kind == 0 || elems[ii].kind == 1)
 							continue;
-						if ((elems[ii].pos.x > checkFx && elems[ii].pos.x < checkTx)
-							||(elems[ii].pos.x+elems[ii].pos.width > checkFx && elems[ii].pos.x+elems[ii].pos.width < checkTx)){
-							if ((elems[ii].pos.y > checkFy && elems[ii].pos.y < checkTy)
-								||(elems[ii].pos.y+elems[ii].pos.height > checkFy && elems[ii].pos.y+elems[ii].pos.height < checkTy)){
+						temp1 = elems[ii].pos.x+elems[ii].pos.width/2 - checkFx;
+						temp2 = elems[ii].pos.x+elems[ii].pos.width/2 - checkTx;
+						temp3 = elems[ii].pos.y+elems[ii].pos.height/2 - checkFy;
+						temp4 = elems[ii].pos.y+elems[ii].pos.height/2 - checkTy;
+						if (temp1 * temp2 < 0){
+							if (temp3 * temp4 < 0){
 								safeFlag = false;
 								break;
 							}
