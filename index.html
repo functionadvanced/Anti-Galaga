@@ -30,17 +30,35 @@
 	var c=$("#mCanvas")[0];
 	var cxt=c.getContext("2d");
 	var img = new Image;
-	img.src = "https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png";
+	img.src = "5355fd144740b.png";
 	var x = 0;
 	img.onload = function() {
-		setInterval("draw()",1000);
+		setInterval("draw()",100);
+	}
+	var elems = [
+		{
+			"imgPos": [223, 974, 0, 637], // fx, tx, fy, ty
+			"pos": {
+				x: 0,
+				y: 0,
+				width: 50,
+				height: 50
+			}
+		}
+	];
+	for (i in elems) {
+		elems[i].imgWidth = elems[i].imgPos[1] - elems[i].imgPos[0];
+		elems[i].imgHeight = elems[i].imgPos[3] - elems[i].imgPos[2];
 	}
 	function draw() {
-		x += 10;
-		x %= 300;
-		console.log(x);
+		elems[0].pos.x += 10;
+		elems[0].pos.x %= 300;
 		cxt.clearRect(0, 0, 300, 500);
-		cxt.drawImage(img, x, 0, 100, 100, 0, 0, 100, 100);
+		showElem(0);
+		
+	}
+	function showElem(_which) {
+		cxt.drawImage(img, elems[_which].imgPos[0], elems[_which].imgPos[2], elems[_which].imgWidth, elems[_which].imgHeight, elems[_which].pos.x, elems[_which].pos.y, elems[_which].pos.width, elems[_which].pos.height);
 	}
 </script>
 </body>
