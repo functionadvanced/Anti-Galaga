@@ -25,42 +25,60 @@
 </head>
 <body style="height: 100%;width: 100%;margin: 0;padding: 0;">
 <h1>Anti-Galaga</h1>
-<canvas id="mCanvas" width="300" height="500"></canvas>
+<canvas id="mCanvas" width="300" height="450"></canvas>
 <script type="text/javascript">
 	var c=$("#mCanvas")[0];
 	var cxt=c.getContext("2d");
 	var img = new Image;
 	img.src = "5355fd144740b.png";
-	var x = 0;
 	img.onload = function() {
-		setInterval("draw()",100);
+		setInterval("draw()",50);
 	}
 	var kindImg = [
-		[223, 974, 0, 637], // fx, tx, fy, ty
+		[3453, 4074, 0, 637], // fx, tx, fy, ty
+		[450, 500, 0, 637], // bullet of ship
+		[450, 500, 0, 637], // bullet of monster
+		[223, 974, 0, 637]
 	];
-	var elems = [
-		{
-			"kind": 0,
-			"pos": {
-				x: 0,
-				y: 0,
-				width: 50,
-				height: 50
+	var elems = [];
+	addElem(0, 137.5, 420, 25, 25, 5, 5);
+	addElem(1, 0, 0, 5, 5, 15, 15);
+	addElem(3, 0, 0, 25, 25, 5, 5);
+	function draw() {
+		//draw
+		cxt.clearRect(0, 0, 300, 450);
+		for (i in elems) {
+			while (elems[i].delFlag){
+				delElem(i);
+				if (i >= elems.length)
+					break;
+			}
+			if (i >= elems.length)
+				break;
+			showElem(i);
+			elems[i].move();
+			if (elems[i].kind != 1 && elems[i].kind != 2) // if not bullet
+				elems[i].shoot();
+		}
+		// collision detection
+		for (i in elems){
+			for (j in elems) {
+				if (i == j)
+					continue;
+				if (elems[i].kind == 1 && elems[j].kind <= 2)
+					continue;
+				if (elems[i].kind == 2 && elems[j].kind != 0)
+					continue;
+				if ((elems[i].pos.x >= elems[j].pos.x && elems[i].pos.x <= elems[j].pos.x+elems[j].pos.width)
+					|| (elems[i].pos.x+elems[i].pos.width >= elems[j].pos.x && elems[i].pos.x+elems[i].pos.width <= elems[j].pos.x+elems[j].pos.width)){
+					if ((elems[i].pos.y >= elems[j].pos.y && elems[i].pos.y <= elems[j].pos.y+elems[j].pos.height)
+					|| (elems[i].pos.y+elems[i].pos.height >= elems[j].pos.y && elems[i].pos.y+elems[i].pos.height <= elems[j].pos.x+elems[j].pos.height)){
+						//console.log("collision");
+						console.log(elems[i].kind+"  "+elems[j].kind);
+					}
+				}
 			}
 		}
-	];
-	addElem(0, 50, 50, 50, 50);
-	function draw() {
-		// elems[0].pos.x += 10;
-		// elems[0].pos.x %= 300;
-		// cxt.clearRect(0, 0, 300, 500);
-		// showElem(0);
-		//showElem(1);
-		cxt.clearRect(0, 0, 300, 500);
-		for (i in elems) {
-			showElem(i);
-		}
-		
 	}
 	function showElem(_which) {
 		cxt.drawImage(img, 
@@ -70,7 +88,7 @@
 			kindImg[elems[_which].kind][1]-kindImg[elems[_which].kind][0],
 			elems[_which].pos.x, elems[_which].pos.y, elems[_which].pos.width, elems[_which].pos.height);
 	}
-	function addElem(_kind, _x, _y, _width, _height) {
+	function addElem(_kind, _x, _y, _width, _height, _dx, _dy) {
 		temp = {
 			"kind": _kind,
 			"pos": {
@@ -78,6 +96,63 @@
 				y: _y,
 				width: _width,
 				height: _height
+			},
+			"speed": {
+				dx: _dx,
+				dy: _dy
+			},
+			"delFlag": false,
+			"shootInterval": 10,
+			move: function(){
+				this.pos.x += this.speed.dx;
+				this.pos.y += this.speed.dy;
+				switch(this.kind) {
+					case 0: // ship
+						if(this.pos.x > c.clientWidth - this.pos.width){
+							this.speed.dx = 0;
+							this.pos.x = c.clientWidth - this.pos.width;
+						}
+						if(this.pos.x < 0){
+							this.speed.dx = 0;
+							this.pos.x = 0;
+						}
+						if(this.pos.y > c.clientHeight - this.pos.height){
+							this.speed.dy = 0;
+							this.pos.y = c.clientHeight - this.pos.height;
+						}
+						if(this.pos.y < 0){
+							this.speed.dy = 0;
+							this.pos.y = 0;
+						}
+						break;
+					case 1: // bullet
+						if (this.pos.x < 0 || (c.clientWidth-this.pos.width-this.pos.x) < 0
+							|| this.pos.y < 0 || (c.clientHeight-this.pos.height-this.pos.y) < 0)
+							this.delFlag = true;
+						break;
+					case 2: // bullet
+						if (this.pos.x < 0 || (c.clientWidth-this.pos.width-this.pos.x) < 0
+							|| this.pos.y < 0 || (c.clientHeight-this.pos.height-this.pos.y) < 0)
+							this.delFlag = true;
+						break;
+					default: // monster
+						if (this.pos.x < 0 || (c.clientWidth-this.pos.width-this.pos.x) < 0)
+							this.speed.dx = -this.speed.dx;
+						if (this.pos.y < 0 || (c.clientHeight-this.pos.height-this.pos.y) < 0)
+							this.speed.dy = -this.speed.dy;
+
+				}
+			},
+			shoot: function(){
+				this.shootInterval--;
+				if (this.shootInterval < 0){
+					if (this.kind == 0){
+						addElem(1, this.pos.x+this.pos.width/2-2.5, this.pos.y+this.pos.height/2, 5, 5, this.speed.dx, this.speed.dy-10);
+					}else{
+						addElem(2, this.pos.x+this.pos.width/2-2.5, this.pos.y+this.pos.height/2, 5, 5, this.speed.dx, this.speed.dy+10);
+					}
+					this.shootInterval = 10;
+				}
 			}
 		};
 		elems.push(temp);
