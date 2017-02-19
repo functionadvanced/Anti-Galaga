@@ -66,7 +66,7 @@
 
 	function turnOnInv() {
 		invulnerableFlag = true;
-		setTimeout("turnOffInv()", 2000); // 2 sec invulnerable
+		setTimeout("turnOffInv()", 3000); // 3 sec invulnerable
 	}
 	function turnOffInv() {
 		invulnerableFlag = false;
@@ -89,8 +89,11 @@
 		[1530, 2300, 2057, 2237] // monster 8
 	];
 	var elems = [];
+	var total_score = -1;
+	var gameOverFlag = false;
 	function reborn() {
 		console.log("reborn");
+		total_score++;
 		turnOnInv();
 		addElem(0, 137.5, 375, 25, 25, 15, 0);
 	}
@@ -112,13 +115,24 @@
 			bg_pos+=0.1;
 			bg_pos %= 180;
 		}
+		if (invulnerableFlag){
+			cxt.font="30px VT323";
+			cxt.fillStyle = "white";
+			cxt.fillText("Current Score: "+(total_score*10), 0, c.clientHeight/2);
+		}
 		if (!Has_start_flag) {
 			cxt.font="40px VT323";
 			cxt.fillStyle = "white";
 			cxt.fillText("Click to Start", 30, c.clientHeight/2);
 			return;
 		}
-
+		if (gameOverFlag) {
+			cxt.font="40px VT323";
+			cxt.fillStyle = "white";
+			cxt.fillText("Game Over!", 30, c.clientHeight/2);
+			cxt.fillText("Score: "+total_score*10, 30, c.clientHeight/2+50);
+			return;
+		}
 		for (i in elems) {
 			while (elems[i].delFlag){
 				// if (elems[i].kind == 0)
@@ -206,7 +220,7 @@
 				mouse_y = 0;
 				if(monster_ready[i+3] > 0 ){
 					monster_ready[i+3] -= 1;
-				  	Attack(i);
+				  	Attack(i+3);
 				} 
 			}   
 			//draw squres
