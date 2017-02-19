@@ -90,6 +90,7 @@
 	];
 	var elems = [];
 	var total_score = -1;
+	var best_score = 0;
 	var gameOverFlag = false;
 	function reborn() {
 		console.log("reborn");
@@ -118,7 +119,10 @@
 		if (invulnerableFlag){
 			cxt.font="30px VT323";
 			cxt.fillStyle = "white";
-			cxt.fillText("Current Score: "+(total_score*10), 0, c.clientHeight/2);
+			cxt.fillText("Current Score: "+(total_score*10), 30, c.clientHeight/2);
+			if (total_score > best_score)
+				best_score = total_score;
+			cxt.fillText("Best Score: "+best_score*10, 30, c.clientHeight/2+40);
 		}
 		if (!Has_start_flag) {
 			cxt.font="40px VT323";
@@ -131,6 +135,10 @@
 			cxt.fillStyle = "white";
 			cxt.fillText("Game Over!", 30, c.clientHeight/2);
 			cxt.fillText("Score: "+total_score*10, 30, c.clientHeight/2+50);
+			cxt.fillText("Click to Restart", 30, c.clientHeight/2+150);
+			if (total_score > best_score)
+				best_score = total_score;
+			cxt.fillText("Best Score: "+best_score*10, 30, c.clientHeight/2+100);
 			return;
 		}
 		for (i in elems) {
@@ -427,6 +435,13 @@
 			crashSound.play();
 			reborn();
 			Has_start_flag = true;
+		}
+		if (gameOverFlag) {
+			while(elems.length != 0)
+				elems.pop();
+			gameOverFlag = false;
+			total_score = -1;
+			reborn();
 		}
 	}
 </script>
