@@ -28,7 +28,7 @@
 		}
 	</style>
 </head>
-<body style="height: 100%;width: 100%;margin: 0;padding: 0;">
+<body style="height: 100%;width: 100%;margin: 0;padding: 0;" onclick="LoadSound()">
 <h1>Anti-Galaga</h1>
 <canvas id="mCanvas" width="300" height="400"></canvas>
 <canvas id="mCanvas2" width="300" height="100"></canvas>
@@ -43,6 +43,8 @@
 	var cxt2=c2.getContext("2d");
 	var img = new Image;
 	var invulnerableFlag = false;
+	var bulletSound;
+	var crashSound;
 	function turnOnInv() {
 		invulnerableFlag = true;
 		setTimeout("turnOffInv()", 2000); // 2 sec invulnerable
@@ -68,7 +70,7 @@
 		[1530, 2300, 2057, 2237] // monster 8
 	];
 	var elems = [];
-	reborn();
+	
 	//addElem(2, 100, 390, 5, 5, 0, 0);
 	function reborn() {
 		console.log("reborn");
@@ -126,8 +128,8 @@
 								elems[j].delFlag = false;
 						}
 						else {
-							var snd = new Audio("crash.wav"); // buffers automatically when created
-							snd.play();
+							crashSound.currentTime = 0;
+							crashSound.play();
 						}
 					}
 				}
@@ -259,8 +261,8 @@
 				if (this.kind == 0)
 					this.shootInterval -= 3.1;
 				if (this.shootInterval < 0){
-					var snd = new Audio("bullet.wav"); // buffers automatically when created
-					snd.play();
+					bulletSound.currentTime = 0;
+					bulletSound.play();
 					if (this.kind == 0){
 						addElem(1, this.pos.x+this.pos.width/2-2.5, this.pos.y+this.pos.height/2, 5, 5, this.speed.dx, this.speed.dy-15);
 						addElem(1, this.pos.x+this.pos.width/2-2.5, this.pos.y+this.pos.height/2, 5, 5, this.speed.dx+10, this.speed.dy-15);
@@ -286,8 +288,6 @@
 		switch(_mode){
 			case 0:	addElem(3, 200, 0, 25, 25, -2, 2); break;
 			case 1: 
-				var snd = new Audio("bullet.wav"); // buffers automatically when created
-				snd.play();
 				addElem(4, 100, 100, 25, 25, 3, 0); 
 				addElem(4, 100, 100, 25, 25, -3, 0);
 
@@ -298,6 +298,15 @@
 				break;
 			case 3: addElem(6, 200, 50, 25, 25, -3, 1); break;
 
+		}
+	}
+	var Has_start_flag = false;
+	function LoadSound(){
+		if (!Has_start_flag) {
+			bulletSound = new Audio("bullet.wav");
+			crashSound = new Audio("crash.wav");
+			reborn();
+			Has_start_flag = true;
 		}
 	}
 </script>
