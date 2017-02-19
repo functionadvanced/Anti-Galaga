@@ -286,6 +286,8 @@
 		switch(_mode){
 			case 0:	addElem(3, 200, 0, 25, 25, -2, 2); break;
 			case 1: 
+				var snd = new Audio("bullet.wav"); // buffers automatically when created
+				snd.play();
 				addElem(4, 100, 100, 25, 25, 3, 0); 
 				addElem(4, 100, 100, 25, 25, -3, 0);
 
