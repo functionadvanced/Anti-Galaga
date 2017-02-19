@@ -5,8 +5,7 @@
 	<script src='https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js'></script>
 	<script src='https://apps.bdimg.com/libs/bootstrap/3.3.4/js/bootstrap.min.js'></script>
 	<link rel='stylesheet' href='https://apps.bdimg.com/libs/bootstrap/3.3.4/css/bootstrap.css'/>
-	<link href="https://fonts.googleapis.com/css?family=Overpass+Mono" rel="stylesheet">
-	<link href="https://fonts.googleapis.com/css?family=Oswald" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css?family=VT323" rel="stylesheet">
 	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 	<style type="text/css">
 		body {
@@ -15,8 +14,14 @@
 		}
 		h1 {
 			color: white;
+			font-family: 'VT323', monospace;
 		}
 		#mCanvas {
+			border: 2px solid white;
+			margin: auto;
+			display: block;
+		}
+		#mCanvas2 {
 			border: 2px solid white;
 			margin: auto;
 			display: block;
@@ -119,6 +124,10 @@
 								elems[i].delFlag = false;
 							if (elems[j].kind == 0)
 								elems[j].delFlag = false;
+						}
+						else {
+							var snd = new Audio("crash.wav"); // buffers automatically when created
+							snd.play();
 						}
 					}
 				}
@@ -231,6 +240,12 @@
 							|| this.pos.y < 0 || (c.clientHeight-this.pos.height-this.pos.y) < 0)
 							this.delFlag = true;
 						break;
+					case 3:
+						if (this.pos.x < c.clientWidth/2 || (c.clientWidth-this.pos.width-this.pos.x) < 0)
+							this.speed.dx = -this.speed.dx;
+						if (this.pos.y < 0 || (c.clientHeight-this.pos.height-this.pos.y) < 0)
+							this.speed.dy = -this.speed.dy;
+						break;
 					default: // monster
 						if (this.pos.x < 0 || (c.clientWidth-this.pos.width-this.pos.x) < 0)
 							this.speed.dx = -this.speed.dx;
@@ -242,12 +257,14 @@
 			shoot: function(){
 				this.shootInterval--;
 				if (this.kind == 0)
-					this.shootInterval -= 3;
+					this.shootInterval -= 3.1;
 				if (this.shootInterval < 0){
+					var snd = new Audio("bullet.wav"); // buffers automatically when created
+					snd.play();
 					if (this.kind == 0){
 						addElem(1, this.pos.x+this.pos.width/2-2.5, this.pos.y+this.pos.height/2, 5, 5, this.speed.dx, this.speed.dy-15);
-						addElem(1, this.pos.x+this.pos.width/2-2.5, this.pos.y+this.pos.height/2, 5, 5, this.speed.dx+15, this.speed.dy-15);
-						addElem(1, this.pos.x+this.pos.width/2-2.5, this.pos.y+this.pos.height/2, 5, 5, this.speed.dx-15, this.speed.dy-15);
+						addElem(1, this.pos.x+this.pos.width/2-2.5, this.pos.y+this.pos.height/2, 5, 5, this.speed.dx+10, this.speed.dy-15);
+						addElem(1, this.pos.x+this.pos.width/2-2.5, this.pos.y+this.pos.height/2, 5, 5, this.speed.dx-10, this.speed.dy-15);
 						addElem(1, this.pos.x+this.pos.width/2-2.5, this.pos.y+this.pos.height/2, 5, 5, this.speed.dx+5, this.speed.dy-15);
 						addElem(1, this.pos.x+this.pos.width/2-2.5, this.pos.y+this.pos.height/2, 5, 5, this.speed.dx-5, this.speed.dy-15);
 
@@ -267,17 +284,17 @@
 
 	function Attack(_mode) {
 		switch(_mode){
-			case 0:	addElem(3, 100, 0, 25, 25, 1, 5); break;
+			case 0:	addElem(3, 200, 0, 25, 25, -2, 2); break;
 			case 1: 
-				addElem(4, 100, 100, 25, 25, 5, 0); 
-				addElem(4, 100, 100, 25, 25, -5, 0);
+				addElem(4, 100, 100, 25, 25, 3, 0); 
+				addElem(4, 100, 100, 25, 25, -3, 0);
 
 				break;
 			case 2: 
-				addElem(5, 0, 0, 25, 25, 5, 2);
-				addElem(5, 200, 0, 25, 25, -5, 2);
+				addElem(5, 0, 0, 25, 25, 3, 2);
+				addElem(5, 200, 0, 25, 25, -3, 2);
 				break;
-			case 3: addElem(6, 200, 50, 25, 25, -5, 1); break;
+			case 3: addElem(6, 200, 50, 25, 25, -3, 1); break;
 
 		}
 	}
