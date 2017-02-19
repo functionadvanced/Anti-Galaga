@@ -28,7 +28,7 @@
 		}
 	</style>
 </head>
-<body style="height: 100%;width: 100%;margin: 0;padding: 0;" onclick="LoadSound()">
+<body style="height: 100%;width: 100%;margin: 0;padding: 0;" onclick="LoadSound()" onmousedown="mouse_down(event)">
 <h1>A n t i - G a l a g a</h1>
 <canvas id="mCanvas" width="300" height="400"></canvas>
 <canvas id="mCanvas2" width="300" height="100"></canvas>
@@ -51,6 +51,19 @@
 	var bulletSound;
 	var crashSound;
 	var Has_start_flag = false;
+
+	//for canvas2
+	var rect_y = 350;
+	var rect_wid = 5;
+	var rect_upbound = 50;
+	var line_x = 10;
+	var line_y = 10;
+	var monster_sq_width = 30; 
+	var charge_rate = new Array(5, 10, 15, 15, 10, 5);
+	var monster_ready = new Array(1,2,3,4,5,6);
+	var mouse_x = 0;
+	var mouse_y = 0;
+
 	function turnOnInv() {
 		invulnerableFlag = true;
 		setTimeout("turnOffInv()", 2000); // 2 sec invulnerable
@@ -82,12 +95,14 @@
 		addElem(0, 137.5, 375, 25, 25, 15, 0);
 	}
 	var bg_pos = 0;
+	function mouse_down(event) {  
+		mouse_x = event.clientX + document.body.scrollLeft - c2.offsetLeft;
+		mouse_y = event.clientY + document.body.scrollTop - c2.offsetTop; 
+	}
 	function draw() {
-		//draw
-		cxt2.fillStyle = "#FF0000";
-		cxt2.fillRect(0, 0, 50, 50);
-
+		//draw 
 		cxt.clearRect(0, 0, c.clientWidth, c.clientHeight);
+		cxt2.clearRect(0, 0, c2.clientWidth, c2.clientHeight);
 		for (i = -1;i < 4;++i){
 			cxt.fillStyle = "#070707";
 			cxt.fillRect(0, i*180+bg_pos, c.clientWidth, 90);
@@ -157,6 +172,63 @@
 				}
 			}
 		}
+		//canvas 2
+		if(rect_y>rect_upbound){
+			rect_y -= 0.1;
+		}  
+		cxt.fillStyle="#A4A4b1";
+		cxt.fillRect(285,rect_y,rect_wid,350-rect_y); 
+		cxt.strokeStyle="white";
+		cxt.strokeRect(285,rect_upbound,rect_wid,300);
+		cxt.stroke(); 
+		cxt2.fillStyle = "#A4A4b1";  
+		cxt2.strokeStyle="white";
+		var x_dist = 10; 
+		//for printing the number of ready monsters
+		cxt2.font = "10px Comic Sans MS";
+		cxt2.fillStyle = "white";
+		cxt2.textAlign = "center";
+		x_dist = 10; 
+		//squres for monsters and clicks on monster
+		for(var i = 0; i<3; i++){
+			//release monsters
+			if(mouse_x >= line_x+x_dist && mouse_x <= line_x+x_dist+monster_sq_width
+				&& mouse_y >= line_y+10 && mouse_y <= line_y+10+monster_sq_width){ 
+				mouse_x = 0;
+				mouse_y = 0;
+				if(monster_ready[i] > 0 ){
+					monster_ready[i] -= 1;
+				  	Attack(i);
+				} 
+			} else if(mouse_x >= line_x+x_dist && mouse_x <= line_x+x_dist+monster_sq_width
+				&& mouse_y >= line_y+45 && mouse_y <= line_y+45+monster_sq_width){ 
+				mouse_x = 0;
+				mouse_y = 0;
+				if(monster_ready[i+3] > 0 ){
+					monster_ready[i+3] -= 1;
+				  	Attack(i);
+				} 
+			}   
+			//draw squres
+			cxt2.strokeRect(line_x+x_dist,line_y+10,monster_sq_width,monster_sq_width); 
+			cxt2.strokeRect(line_x+x_dist,line_y+45,monster_sq_width,monster_sq_width);
+			//draw the number of ready monsters 
+			cxt2.fillText(Math.floor(monster_ready[i]), line_x+x_dist+monster_sq_width-5,line_y+20);
+			cxt2.fillText(Math.floor(monster_ready[i+3]), line_x+x_dist+monster_sq_width-5,line_y+55);  
+			//draw energy charging
+			cxt2.fillRect(line_x+x_dist, line_y+10+monster_sq_width-charge_rate[i],monster_sq_width,charge_rate[i]);  
+			cxt2.fillRect(line_x+x_dist, line_y+45+monster_sq_width-charge_rate[i+3],monster_sq_width,charge_rate[i+3]); 
+			x_dist += 40;
+		}   
+		//refill energy for monsters
+		x_dist = 10; 
+		for(var i = 0; i<charge_rate.length; i++){
+			charge_rate[i] += (i+1)*0.005;
+			if(charge_rate[i]>monster_sq_width){
+				monster_ready[i] += 1;
+				charge_rate[i] = 0;
+			}
+		}  
 	}
 	function showElem(_which) {
 		cxt.drawImage(img, 
