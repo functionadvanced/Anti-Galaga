@@ -244,9 +244,33 @@
 				} 
 			} 
 			//draw squres
-			cxt2.strokeRect(line_x+x_dist,line_y+10,monster_sq_width,monster_sq_width); 
+			cxt2.strokeRect(line_x+x_dist,line_y+10,monster_sq_width,monster_sq_width);
+			cxt2.drawImage(img, 
+				kindImg[i+3][0],
+				kindImg[i+3][2], 
+				kindImg[i+3][1]-kindImg[i+3][0],
+				kindImg[i+3][3]-kindImg[i+3][2],
+				line_x+x_dist+10, line_y+25, monster_sq_width*0.6, monster_sq_width*0.6);
 			cxt2.strokeRect(line_x+x_dist,line_y+55,monster_sq_width,monster_sq_width);
-			if(i == 2) cxt2.strokeRect(line_x+x_dist+53,line_y+10,monster_sq_width*2.9,monster_sq_width*2.1);
+			tempi = i+6;
+			if (i == 2)
+				tempi = 9;
+			cxt2.drawImage(img, 
+				kindImg[tempi][0],
+				kindImg[tempi][2], 
+				kindImg[tempi][1]-kindImg[tempi][0],
+				kindImg[tempi][3]-kindImg[tempi][2],
+				line_x+x_dist+10, line_y+70, monster_sq_width*0.6, monster_sq_width*0.6);
+			if(i == 2){
+				cxt2.strokeRect(line_x+x_dist+53,line_y+10,monster_sq_width*2.9,monster_sq_width*2.1);
+				tempi = 8;
+				cxt2.drawImage(img, 
+					kindImg[tempi][0],
+					kindImg[tempi][2], 
+					kindImg[tempi][1]-kindImg[tempi][0],
+					kindImg[tempi][3]-kindImg[tempi][2],
+					line_x+x_dist+50, line_y+10, monster_sq_width*2.9, monster_sq_width*2.1);
+			}
 			//draw the number of ready monsters 
 			cxt2.fillText(Math.floor(monster_ready[i])+"/"+monster_max[i], line_x+x_dist+monster_sq_width-15.5,line_y+23);
 			cxt2.fillText(Math.floor(monster_ready[i+3])+"/"+monster_max[i+3], line_x+x_dist+monster_sq_width-15.5,line_y+68);
