@@ -33,7 +33,7 @@
 		}
 	</style>
 </head>
-<body style="height: 100%;width: 100%;margin: 0;padding: 0;" onClick="RestartGame()" onTouch="RestartGame()" onmousedown="mouse_down(event)">
+<body style="height: 100%;width: 100%;margin: 0;padding: 0;" onmousedown="mouse_down(event)">
 <h1><span style="color:yellow">A</span> <span style="color:red">n</span> <span style="color:green">t</span> <span style="color:blue">i</span> - G a l a g a</h1>
 <canvas id="mCanvas" width="300" height="400"></canvas>
 <canvas id="mCanvas2" width="300" height="100"></canvas>
@@ -100,7 +100,8 @@
 	}
 	var bg_pos = 0;
 	var bg_pos2 = 0;
-	function mouse_down(event) {  
+	function mouse_down(event) {
+		RestartGame();
 		mouse_x = event.clientX + document.body.scrollLeft - c2.offsetLeft;
 		mouse_y = event.clientY + document.body.scrollTop - c2.offsetTop; 
 	}
