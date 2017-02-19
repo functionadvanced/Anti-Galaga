@@ -26,6 +26,7 @@
 <body style="height: 100%;width: 100%;margin: 0;padding: 0;">
 <h1>Anti-Galaga</h1>
 <canvas id="mCanvas" width="300" height="400"></canvas>
+<canvas id="mCanvas2" width="300" height="100"></canvas>
 <button onclick="Attack(0)">A</button>
 <button onclick="Attack(1)">B</button>
 <button onclick="Attack(2)">C</button>
@@ -33,6 +34,8 @@
 <script type="text/javascript">
 	var c=$("#mCanvas")[0];
 	var cxt=c.getContext("2d");
+	var c2=$("#mCanvas2")[0];
+	var cxt2=c2.getContext("2d");
 	var img = new Image;
 	var invulnerableFlag = false;
 	function turnOnInv() {
@@ -69,6 +72,8 @@
 	}
 	function draw() {
 		//draw
+		cxt2.fillStyle = "#FF0000";
+		cxt2.fillRect(0, 0, 50, 50);
 		cxt.clearRect(0, 0, c.clientWidth, c.clientHeight);
 		for (i in elems) {
 			while (elems[i].delFlag){
