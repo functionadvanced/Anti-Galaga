@@ -60,6 +60,7 @@
 	var monster_sq_width = 40; 
 	var charge_rate = new Array(1, 1, 1, 1, 1, 1, 1);
 	var charge_speed = new Array(20, 17, 15, 13, 13, 10, 5);
+	var monster_ready_record = new Array(1,2,3,2,1,0,0);
 	var monster_ready = new Array(1,2,3,2,1,0,0);
 	var monster_max = new Array(10, 5, 4, 5, 2, 3, 1);
 	var mouse_x = 0;
@@ -74,12 +75,12 @@
 	}
 	img.src = "5355fd144740b.png";
 	img.onload = function() {
-		setInterval("draw()",5);
+		setInterval("draw()",10);
 	}
 	var kindImg = [
 		[3453, 4074, 0, 637], // fx, tx, fy, ty
 		[450, 500, 0, 637], // bullet of ship
-		[450, 500, 0, 637], // bullet of monster
+		[223, 974, 0, 637], // bullet of monster
 		[223, 974, 0, 637],// moster 1
 		[1274, 2025, 0, 637],
 		[2325, 3176, 0, 637],
@@ -99,22 +100,41 @@
 		addElem(0, 137.5, 375, 25, 25, 15, 0);
 	}
 	var bg_pos = 0;
+	var bg_pos2 = 0;
 	function mouse_down(event) {  
 		mouse_x = event.clientX + document.body.scrollLeft - c2.offsetLeft;
 		mouse_y = event.clientY + document.body.scrollTop - c2.offsetTop; 
 	}
+	var distance_to_end = 100;
 	function draw() {
 		//draw 
 		cxt.clearRect(0, 0, c.clientWidth, c.clientHeight);
 		cxt2.clearRect(0, 0, c2.clientWidth, c2.clientHeight);
 		for (i = -1;i < 4;++i){
-			cxt.fillStyle = "#070707";
-			cxt.fillRect(0, i*180+bg_pos, c.clientWidth, 90);
+			cxt.fillStyle = "#171717";
+			cxt.fillRect(0, i*200+bg_pos2, c.clientWidth, 100);
 			cxt.font="40px VT323";
-			cxt.fillStyle = "#0F0F0F";
-			cxt.fillText("M A D H A C K S", 30, i*180+bg_pos+60);
+			cxt.fillStyle = "#3F3F3F";
+			cxt.fillText("M A D H A C K S", 30, i*200+bg_pos2+60);
 			bg_pos+=0.1;
-			bg_pos %= 180;
+			bg_pos2+=0.05;
+			if (bg_pos > 200)
+				bg_pos = 0;
+			if (bg_pos2 > 200)
+				bg_pos2 = 0;
+			if (!gameOverFlag && Has_start_flag && Math.floor(distance_to_end+i*5) >= 0){
+				cxt.fillStyle = "grey";
+				if (Math.floor(distance_to_end+i*5) <= 20)
+					cxt.fillStyle = "red";
+				cxt.font="20px VT323";
+				cxt.fillText("___________________________ "+Math.floor(distance_to_end+i*5)+"m", 30, i*200+bg_pos+80)
+				if (bg_pos == 0.2)
+					distance_to_end-=5;
+			}
+			if (distance_to_end == -10) {
+				gameOverFlag = true;
+				distance_to_end = 100;
+			}
 		}
 		if (gameOverFlag) {
 			cxt.font="40px VT323";
@@ -127,20 +147,28 @@
 			cxt.fillText("Best Score: "+best_score*10, 30, c.clientHeight/2+100);
 			return;
 		}
-		if (invulnerableFlag){
-			cxt.font="30px VT323";
-			cxt.fillStyle = "white";
-			cxt.fillText("Current Score: "+(total_score*10), 30, c.clientHeight/2);
-			if (total_score > best_score)
-				best_score = total_score;
-			cxt.fillText("Best Score: "+best_score*10, 30, c.clientHeight/2+40);
-		}
+		// if (invulnerableFlag){
+		// 	cxt.font="30px VT323";
+		// 	cxt.fillStyle = "white";
+		// 	cxt.fillText("Current Score: "+(total_score*10), 30, c.clientHeight/2);
+		// 	if (total_score > best_score)
+		// 		best_score = total_score;
+		// 	cxt.fillText("Best Score: "+best_score*10, 30, c.clientHeight/2+40);
+		// }
 		if (!Has_start_flag) {
 			cxt.font="40px VT323";
 			cxt.fillStyle = "white";
 			cxt.fillText("Click to Start", 30, c.clientHeight/2);
 			return;
 		}
+		cxt.font="20px VT323";
+		cxt.fillStyle = "white";
+		cxt.fillText("Score: "+(total_score*10), 0, 12);
+		if (total_score > best_score)
+			best_score = total_score;
+		cxt.fillText("Best : "+best_score*10, 0, 25);
+
+		
 		for (i in elems) {
 			while (elems[i].delFlag){
 				// if (elems[i].kind == 0)
@@ -194,16 +222,16 @@
 				}
 			}
 		}
-		if(rect_y<=330){
-			rect_y += 0.2;
-		} else{
-			gameOverFlag = true; 
-			rect_y = 0;
-		} 
-		cxt.fillStyle="rgba(252,50,50,0.4)";  
-		cxt.fillRect(285,rect_upbound+rect_y,rect_wid,330-rect_y);  
-		cxt2.fillStyle = "rgba(255,255,255,0.3)";  
-		cxt2.strokeStyle="white";
+		// if(rect_y<=330){
+		// 	rect_y += 0.2;
+		// } else{
+		// 	//gameOverFlag = true; 
+		// 	rect_y = 0;
+		// } 
+		// cxt.fillStyle="rgba(252,50,50,0.4)";  
+		// cxt.fillRect(285,rect_upbound+rect_y,rect_wid,330-rect_y);  
+		// cxt2.fillStyle = "rgba(255,255,255,0.3)";  
+		// cxt2.strokeStyle="white";
 		var x_dist = 10; 
 		//for printing the number of ready monsters
 		cxt2.font = "13px Comic Sans MS";
@@ -497,6 +525,8 @@
 				elems.pop();
 			gameOverFlag = false;
 			total_score = -1;
+			for (i in monster_ready_record)
+				monster_ready[i] = monster_ready_record[i];
 			reborn();
 		}
 	}
