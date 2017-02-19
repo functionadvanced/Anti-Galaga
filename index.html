@@ -29,22 +29,28 @@
 	</style>
 </head>
 <body style="height: 100%;width: 100%;margin: 0;padding: 0;" onclick="LoadSound()">
-<h1>Anti-Galaga</h1>
+<h1>A n t i - G a l a g a</h1>
 <canvas id="mCanvas" width="300" height="400"></canvas>
 <canvas id="mCanvas2" width="300" height="100"></canvas>
 <button onclick="Attack(0)">A</button>
 <button onclick="Attack(1)">B</button>
 <button onclick="Attack(2)">C</button>
 <button onclick="Attack(3)">D</button>
+<button onclick="Attack(4)">E</button>
+<button onclick="Attack(5)">F</button>
+<button onclick="Attack(6)">G</button>
 <script type="text/javascript">
 	var c=$("#mCanvas")[0];
 	var cxt=c.getContext("2d");
+	// cxt.translate(0, c.clientHeight);
+	// cxt.scale(1, -1);
 	var c2=$("#mCanvas2")[0];
 	var cxt2=c2.getContext("2d");
 	var img = new Image;
 	var invulnerableFlag = false;
 	var bulletSound;
 	var crashSound;
+	var Has_start_flag = false;
 	function turnOnInv() {
 		invulnerableFlag = true;
 		setTimeout("turnOffInv()", 2000); // 2 sec invulnerable
@@ -65,23 +71,39 @@
 		[2325, 3176, 0, 637],
 		[223, 1100, 1000, 1637],
 		[1450, 2300, 1000, 1637],
-		[2700, 4100, 900, 1637],
-		[223, 1100, 2037, 2237],
+		[2700, 4100, 900, 1637], // big
+		[185, 1121, 2205, 2657],
 		[1530, 2300, 2057, 2237] // monster 8
 	];
 	var elems = [];
-	
-	//addElem(2, 100, 390, 5, 5, 0, 0);
 	function reborn() {
 		console.log("reborn");
 		turnOnInv();
 		addElem(0, 137.5, 375, 25, 25, 15, 0);
 	}
+	var bg_pos = 0;
 	function draw() {
 		//draw
 		cxt2.fillStyle = "#FF0000";
 		cxt2.fillRect(0, 0, 50, 50);
+
 		cxt.clearRect(0, 0, c.clientWidth, c.clientHeight);
+		for (i = -1;i < 4;++i){
+			cxt.fillStyle = "#070707";
+			cxt.fillRect(0, i*180+bg_pos, c.clientWidth, 90);
+			cxt.font="40px VT323";
+			cxt.fillStyle = "#0F0F0F";
+			cxt.fillText("M A D H A C K S", 30, i*180+bg_pos+60);
+			bg_pos+=0.1;
+			bg_pos %= 180;
+		}
+		if (!Has_start_flag) {
+			cxt.font="40px VT323";
+			cxt.fillStyle = "white";
+			cxt.fillText("Click to Start", 30, c.clientHeight/2);
+			return;
+		}
+
 		for (i in elems) {
 			while (elems[i].delFlag){
 				// if (elems[i].kind == 0)
@@ -115,12 +137,12 @@
 					|| (elems[i].pos.x+elems[i].pos.width >= elems[j].pos.x && elems[i].pos.x+elems[i].pos.width <= elems[j].pos.x+elems[j].pos.width)){
 					if ((elems[i].pos.y >= elems[j].pos.y && elems[i].pos.y <= elems[j].pos.y+elems[j].pos.height)
 					|| (elems[i].pos.y+elems[i].pos.height >= elems[j].pos.y && elems[i].pos.y+elems[i].pos.height <= elems[j].pos.y+elems[j].pos.height)){
-						//console.log("collision");
-						// console.log(elems[i].kind+"  "+elems[j].kind);
-						// console.log(elems[i]);
-						// console.log(elems[j]);
-						elems[i].delFlag = true;
-						elems[j].delFlag = true;
+						elems[i].health--;
+						elems[j].health--;
+						if (elems[i].health <= 0)
+							elems[i].delFlag = true;
+						if (elems[j].health <= 0)
+							elems[j].delFlag = true;
 						if (invulnerableFlag) {
 							if (elems[i].kind == 0)
 								elems[i].delFlag = false;
@@ -141,7 +163,7 @@
 			kindImg[elems[_which].kind][0],
 			kindImg[elems[_which].kind][2], 
 			kindImg[elems[_which].kind][1]-kindImg[elems[_which].kind][0],
-			kindImg[elems[_which].kind][1]-kindImg[elems[_which].kind][0],
+			kindImg[elems[_which].kind][3]-kindImg[elems[_which].kind][2],
 			elems[_which].pos.x, elems[_which].pos.y, elems[_which].pos.width, elems[_which].pos.height);
 	}
 	function addElem(_kind, _x, _y, _width, _height, _dx, _dy) {
@@ -178,7 +200,6 @@
 						temp2 = elems[ii].pos.x+elems[ii].pos.width/2 - checkTx;
 						temp3 = elems[ii].pos.y+elems[ii].pos.height/2 - checkFy;
 						temp4 = elems[ii].pos.y+elems[ii].pos.height/2 - checkTy;
-						//console.log("1: "+temp1+" 2: "+temp2+" 3: "+temp3+" 4: "+temp4);
 						if (temp1 * temp2 < 0){
 							if (temp3 * temp4 < 0){
 								safeFlag = false;
@@ -190,7 +211,6 @@
 						safeFlag = false;
 					}
 					if (safeFlag){
-						//this.speed.dx = -Math.abs(this.speed.dx);
 						return;
 					}
 					checkFx = this.pos.x-40*this.speed.dx/Math.abs(this.speed.dx);
@@ -212,7 +232,6 @@
 							}
 						}
 					}
-					//console.log(safeFlag);
 					if (safeFlag){
 						this.speed.dx = -this.speed.dx;
 						return;
@@ -263,21 +282,32 @@
 				if (this.shootInterval < 0){
 					bulletSound.currentTime = 0;
 					bulletSound.play();
-					if (this.kind == 0){
-						addElem(1, this.pos.x+this.pos.width/2-2.5, this.pos.y+this.pos.height/2, 5, 5, this.speed.dx, this.speed.dy-15);
-						addElem(1, this.pos.x+this.pos.width/2-2.5, this.pos.y+this.pos.height/2, 5, 5, this.speed.dx+10, this.speed.dy-15);
-						addElem(1, this.pos.x+this.pos.width/2-2.5, this.pos.y+this.pos.height/2, 5, 5, this.speed.dx-10, this.speed.dy-15);
-						addElem(1, this.pos.x+this.pos.width/2-2.5, this.pos.y+this.pos.height/2, 5, 5, this.speed.dx+5, this.speed.dy-15);
-						addElem(1, this.pos.x+this.pos.width/2-2.5, this.pos.y+this.pos.height/2, 5, 5, this.speed.dx-5, this.speed.dy-15);
-
-					}else{
-						addElem(2, this.pos.x+this.pos.width/2-2.5, this.pos.y+this.pos.height/2, 5, 5, this.speed.dx, this.speed.dy+15);
+					switch(this.kind){
+						case 0:
+							addElem(1, this.pos.x+this.pos.width/2-2.5, this.pos.y+this.pos.height/2, 5, 5, this.speed.dx, this.speed.dy-15);
+							addElem(1, this.pos.x+this.pos.width/2-2.5, this.pos.y+this.pos.height/2, 5, 5, this.speed.dx+10, this.speed.dy-15);
+							addElem(1, this.pos.x+this.pos.width/2-2.5, this.pos.y+this.pos.height/2, 5, 5, this.speed.dx-10, this.speed.dy-15);
+							addElem(1, this.pos.x+this.pos.width/2-2.5, this.pos.y+this.pos.height/2, 5, 5, this.speed.dx+5, this.speed.dy-15);
+							addElem(1, this.pos.x+this.pos.width/2-2.5, this.pos.y+this.pos.height/2, 5, 5, this.speed.dx-5, this.speed.dy-15);
+							break;
+						case 8:
+							addElem(2, this.pos.x+this.pos.width/2-2.5, this.pos.y+this.pos.height/2, 5, 5, this.speed.dx, this.speed.dy+15);
+							addElem(2, this.pos.x+this.pos.width/2-2.5, this.pos.y+this.pos.height/2, 5, 5, this.speed.dx+10, this.speed.dy+15);
+							addElem(2, this.pos.x+this.pos.width/2-2.5, this.pos.y+this.pos.height/2, 5, 5, this.speed.dx-10, this.speed.dy+15);
+							addElem(2, this.pos.x+this.pos.width/2-2.5, this.pos.y+this.pos.height/2, 5, 5, this.speed.dx+5, this.speed.dy+15);
+							addElem(2, this.pos.x+this.pos.width/2-2.5, this.pos.y+this.pos.height/2, 5, 5, this.speed.dx-5, this.speed.dy+15);
+						default:
+							addElem(2, this.pos.x+this.pos.width/2-2.5, this.pos.y+this.pos.height/2, 5, 5, this.speed.dx, this.speed.dy+15);
 					}
-					
 					this.shootInterval = 150;
 				}
 			}
 		};
+		switch(temp.kind){
+			case 9: temp.health = 5; break;
+			case 8: temp.health = 10; break;
+			default: temp.health = 1; break;
+		}
 		elems.push(temp);
 	}
 	function delElem(_which) {
@@ -290,21 +320,23 @@
 			case 1: 
 				addElem(4, 100, 100, 25, 25, 3, 0); 
 				addElem(4, 100, 100, 25, 25, -3, 0);
-
 				break;
 			case 2: 
 				addElem(5, 0, 0, 25, 25, 3, 2);
 				addElem(5, 200, 0, 25, 25, -3, 2);
 				break;
 			case 3: addElem(6, 200, 50, 25, 25, -3, 1); break;
-
+			case 4: addElem(7, 90, 30, 25, 25, -3, 1); break;
+			case 5: addElem(9, 90, 30, 50, 50, -2, -1); break;
+			case 6: addElem(8, 100, 100, 70, 50, 2, 0);
 		}
 	}
-	var Has_start_flag = false;
+	
 	function LoadSound(){
 		if (!Has_start_flag) {
 			bulletSound = new Audio("bullet.wav");
 			crashSound = new Audio("crash.wav");
+			bulletSound.volume = 0.1;
 			bulletSound.play();
 			reborn();
 			Has_start_flag = true;
