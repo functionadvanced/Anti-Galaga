@@ -249,7 +249,7 @@
 			if(i == 2) cxt2.strokeRect(line_x+x_dist+53,line_y+10,monster_sq_width*2.9,monster_sq_width*2.1);
 			//draw the number of ready monsters 
 			cxt2.fillText(Math.floor(monster_ready[i])+"/"+monster_max[i], line_x+x_dist+monster_sq_width-15.5,line_y+23);
-			cxt2.fillText(Math.floor(monster_ready[i+3])+"/"+monster_max[i], line_x+x_dist+monster_sq_width-15.5,line_y+68);
+			cxt2.fillText(Math.floor(monster_ready[i+3])+"/"+monster_max[i+3], line_x+x_dist+monster_sq_width-15.5,line_y+68);
 			if(i == 2) cxt2.fillText(Math.floor(monster_ready[6])+"/"+monster_max[6], line_x+x_dist+53+monster_sq_width*2.9-14,line_y+23);
 			//draw energy charging
 			cxt2.fillRect(line_x+x_dist, line_y+10+monster_sq_width-charge_rate[i],monster_sq_width,charge_rate[i]);  
