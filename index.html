@@ -109,30 +109,35 @@
 		//draw 
 		cxt.clearRect(0, 0, c.clientWidth, c.clientHeight);
 		cxt2.clearRect(0, 0, c2.clientWidth, c2.clientHeight);
+		bg_pos+=0.5;
+		bg_pos2+=0.25;
+		if (bg_pos > 200){
+			distance_to_end-=5;
+			bg_pos = 0.5;
+		}
+		if (bg_pos2 > 200){
+
+			bg_pos2 = 0.25;
+		}
 		for (i = 0;i < 5;++i){
 			cxt.fillStyle = "#171717";
 			cxt.fillRect(0, (i-1)*200+bg_pos2, c.clientWidth, 100);
 			cxt.font="40px VT323";
 			cxt.fillStyle = "#3F3F3F";
 			cxt.fillText("M A D H A C K S", 30, (i-1)*200+bg_pos2+60);
-			bg_pos+=0.1;
-			bg_pos2+=0.05;
-			if (bg_pos > 200)
-				bg_pos = 0;
-			if (bg_pos2 > 200)
-				bg_pos2 = 0;
+
 			if (!gameOverFlag && Has_start_flag && Math.floor(distance_to_end+i*5) >= 0){
 				cxt.fillStyle = "grey";
 				if (Math.floor(distance_to_end+i*5) <= 20)
 					cxt.fillStyle = "red";
 				cxt.font="20px VT323";
 				cxt.fillText("___________________________ "+Math.floor(distance_to_end+i*5)+"m", 30, (i-1)*200+bg_pos+80)
-				if (bg_pos == 0)
-					distance_to_end-=5;
+				
 			}
 			if (distance_to_end == -15) {
 				gameOverFlag = true;
 				distance_to_end = 100;
+				break;
 			}
 		}
 		if (gameOverFlag) {
