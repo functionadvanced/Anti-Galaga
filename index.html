@@ -552,8 +552,10 @@
 				elems.pop();
 			gameOverFlag = false;
 			total_score = 0;
-			for (i in monster_ready_record)
+			for (i in monster_ready_record){
+				charge_rate[i] = 1;
 				monster_ready[i] = monster_ready_record[i];
+			} 
 			reborn();
 		}
 	}
