@@ -11,6 +11,15 @@
 		body {
 			background-color: black;
 			text-align: center;
+			-moz-user-select: none; /*火狐*/
+
+			-webkit-user-select: none; /*webkit浏览器*/
+
+			-ms-user-select: none; /*IE10*/
+
+			-khtml-user-select: none; /*早期浏览器*/
+
+			user-select: none;
 		}
 		h1 {
 			color: white;
@@ -32,13 +41,6 @@
 <h1>A n t i - G a l a g a</h1>
 <canvas id="mCanvas" width="300" height="400"></canvas>
 <canvas id="mCanvas2" width="300" height="100"></canvas>
-<button onclick="Attack(0)">A</button>
-<button onclick="Attack(1)">B</button>
-<button onclick="Attack(2)">C</button>
-<button onclick="Attack(3)">D</button>
-<button onclick="Attack(4)">E</button>
-<button onclick="Attack(5)">F</button>
-<button onclick="Attack(6)">G</button>
 <script type="text/javascript">
 	var c=$("#mCanvas")[0];
 	var cxt=c.getContext("2d");
@@ -50,10 +52,11 @@
 	var invulnerableFlag = false;
 	var bulletSound;
 	var crashSound;
+	var buttonSound;
 	var Has_start_flag = false;
 
 	//for canvas2
-	var rect_y = 0;
+	var rect_y = 350;
 	var rect_wid = 5;
 	var rect_upbound = 50;
 	var line_x = 3;
@@ -197,17 +200,17 @@
 			}
 		}
 		//canvas 2
-		if(rect_y<=330){
-			rect_y += 0.2;
+		if(rect_y>rect_upbound){
+			rect_y -= 0.01;
 		} else{
 			gameOverFlag = true; 
-			rect_y = 0;
+			rect_y = 350;
 		} 
-		cxt.fillStyle="rgba(252,50,50,0.4)";  
-		cxt.fillRect(285,rect_upbound+rect_y,rect_wid,330-rect_y); 
-		// cxt.strokeStyle="white";
-		// cxt.strokeRect(285,rect_upbound,rect_wid,300);
-		// cxt.stroke(); 
+		cxt.fillStyle="rgba(192,192,192,0.4)";  
+		cxt.fillRect(285,rect_y,rect_wid,350-rect_y); 
+		cxt.strokeStyle="white";
+		cxt.strokeRect(285,rect_upbound,rect_wid,300);
+		cxt.stroke(); 
 		cxt2.fillStyle = "rgba(255,255,255,0.3)";  
 		cxt2.strokeStyle="white";
 		var x_dist = 10; 
@@ -224,6 +227,8 @@
 				mouse_y = 0;
 				if(monster_ready[i] > 0 ){
 					monster_ready[i] -= 1;
+					buttonSound.currentTime = 0;
+					buttonSound.play();
 				  	Attack(i);
 				} 
 			} else if(mouse_x >= line_x+x_dist && mouse_x <= line_x+x_dist+monster_sq_width
@@ -232,6 +237,8 @@
 				mouse_y = 0;
 				if(monster_ready[i+3] > 0 ){
 					monster_ready[i+3] -= 1;
+					buttonSound.currentTime = 0;
+					buttonSound.play();
 				  	Attack(i+3);
 				} 
 			} else if(i == 2 && mouse_x >= line_x+x_dist+53 && mouse_x <= line_x+x_dist+53+monster_sq_width*2.9
@@ -476,9 +483,11 @@
 		if (!Has_start_flag) {
 			bulletSound = new Audio("bullet.wav");
 			crashSound = new Audio("crash.wav");
+			buttonSound = new Audio("Button.wav");
 			bulletSound.volume = 0.1;
 			bulletSound.play();
 			crashSound.play();
+			buttonSound.play();
 			reborn();
 			Has_start_flag = true;
 		}
