@@ -3,3 +3,5 @@ As we all know, the objective of normal Galaga is to score as many points as pos
 - Play as insect-like enemies!
 - Destroy the starfighter as many times as possible!
 - <a href="http://functionadvanced.github.io/Anti-Galaga/">Click here to play!</a>
+
+![alt tag](https://functionadvanced.github.io/Anti-Galaga/demo.gif)
