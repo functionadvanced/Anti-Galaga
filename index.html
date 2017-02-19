@@ -56,7 +56,7 @@
 	var Has_start_flag = false;
 
 	//for canvas2
-	var rect_y = 350;
+	var rect_y = 0;
 	var rect_wid = 5;
 	var rect_upbound = 50;
 	var line_x = 3;
@@ -199,18 +199,14 @@
 				}
 			}
 		}
-		//canvas 2
-		if(rect_y>rect_upbound){
-			rect_y -= 0.01;
+		if(rect_y<=330){
+			rect_y += 0.2;
 		} else{
 			gameOverFlag = true; 
-			rect_y = 350;
+			rect_y = 0;
 		} 
-		cxt.fillStyle="rgba(192,192,192,0.4)";  
-		cxt.fillRect(285,rect_y,rect_wid,350-rect_y); 
-		cxt.strokeStyle="white";
-		cxt.strokeRect(285,rect_upbound,rect_wid,300);
-		cxt.stroke(); 
+		cxt.fillStyle="rgba(252,50,50,0.4)";  
+		cxt.fillRect(285,rect_upbound+rect_y,rect_wid,330-rect_y);  
 		cxt2.fillStyle = "rgba(255,255,255,0.3)";  
 		cxt2.strokeStyle="white";
 		var x_dist = 10; 
