@@ -305,6 +305,7 @@
 		if (!Has_start_flag) {
 			bulletSound = new Audio("bullet.wav");
 			crashSound = new Audio("crash.wav");
+			bulletSound.play();
 			reborn();
 			Has_start_flag = true;
 		}
