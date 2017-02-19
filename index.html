@@ -344,7 +344,7 @@
 				continue;
 			charge_rate[i] += (charge_speed[i]+1)*0.003;
 			if(i == charge_rate.length-1){
-				if(charge_rate[i]>monster_sq_width*2.1-(line_y+10)){
+				if(charge_rate[i]>monster_sq_width*2.1){
 					monster_ready[i] += 1;
 					charge_rate[i] = 0;
 				} 
