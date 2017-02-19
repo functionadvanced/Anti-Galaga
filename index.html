@@ -33,7 +33,7 @@
 		}
 	</style>
 </head>
-<body style="height: 100%;width: 100%;margin: 0;padding: 0;" onClick="RestartGame()" onTouch="RestartGame()" onmousedown="mouse_down(event)">
+<body style="height: 100%;width: 100%;margin: 0;padding: 0;" onClick="RestartGame()" onmousedown="mouse_down(event)">
 <h1><span style="color:yellow">A</span> <span style="color:red">n</span> <span style="color:green">t</span> <span style="color:blue">i</span> - G a l a g a</h1>
 <canvas id="mCanvas" width="300" height="400"></canvas>
 <canvas id="mCanvas2" width="300" height="100"></canvas>
@@ -52,6 +52,7 @@
 	var Has_start_flag = false;
 
 	//for canvas2
+	var initial_flag = true;
 	var rect_y = 0;
 	var rect_wid = 5;
 	var rect_upbound = 50;
@@ -106,6 +107,13 @@
 	}
 	var distance_to_end = 100;
 	function draw() {
+		//initiate game
+		if((!Has_start_flag || gameOverFlag) && mouse_x > 0 && mouse_y>0){ 
+			Has_start_flag = true;
+			mouse_x = 0;
+			mouse_y = 0;
+			RestartGame();
+		}
 		//draw 
 		cxt.clearRect(0, 0, c.clientWidth, c.clientHeight);
 		cxt2.clearRect(0, 0, c2.clientWidth, c2.clientHeight);
