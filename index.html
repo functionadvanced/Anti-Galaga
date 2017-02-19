@@ -91,11 +91,10 @@
 		[1530, 2300, 2057, 2237] // monster 8
 	];
 	var elems = [];
-	var total_score = -1;
+	var total_score = 0;
 	var best_score = 0;
 	var gameOverFlag = false;
 	function reborn() {
-		total_score++;
 		turnOnInv();
 		addElem(0, 137.5, 375, 25, 25, 15, 0);
 	}
@@ -110,12 +109,12 @@
 		//draw 
 		cxt.clearRect(0, 0, c.clientWidth, c.clientHeight);
 		cxt2.clearRect(0, 0, c2.clientWidth, c2.clientHeight);
-		for (i = -1;i < 4;++i){
+		for (i = 0;i < 5;++i){
 			cxt.fillStyle = "#171717";
-			cxt.fillRect(0, i*200+bg_pos2, c.clientWidth, 100);
+			cxt.fillRect(0, (i-1)*200+bg_pos2, c.clientWidth, 100);
 			cxt.font="40px VT323";
 			cxt.fillStyle = "#3F3F3F";
-			cxt.fillText("M A D H A C K S", 30, i*200+bg_pos2+60);
+			cxt.fillText("M A D H A C K S", 30, (i-1)*200+bg_pos2+60);
 			bg_pos+=0.1;
 			bg_pos2+=0.05;
 			if (bg_pos > 200)
@@ -127,11 +126,11 @@
 				if (Math.floor(distance_to_end+i*5) <= 20)
 					cxt.fillStyle = "red";
 				cxt.font="20px VT323";
-				cxt.fillText("___________________________ "+Math.floor(distance_to_end+i*5)+"m", 30, i*200+bg_pos+80)
-				if (bg_pos == 0.2)
+				cxt.fillText("___________________________ "+Math.floor(distance_to_end+i*5)+"m", 30, (i-1)*200+bg_pos+80)
+				if (bg_pos == 0)
 					distance_to_end-=5;
 			}
-			if (distance_to_end == -10) {
+			if (distance_to_end == -15) {
 				gameOverFlag = true;
 				distance_to_end = 100;
 			}
@@ -161,20 +160,17 @@
 			cxt.fillText("Click to Start", 30, c.clientHeight/2);
 			return;
 		}
-		cxt.font="20px VT323";
-		cxt.fillStyle = "white";
-		cxt.fillText("Score: "+(total_score*10), 0, 12);
-		if (total_score > best_score)
-			best_score = total_score;
-		cxt.fillText("Best : "+best_score*10, 0, 25);
+		
 
 		
 		for (i in elems) {
 			while (elems[i].delFlag){
 				// if (elems[i].kind == 0)
 				// 	setTimeout("reborn()", 500);
-				if (elems[i].kind == 0)
+				if (elems[i].kind == 0){
+					total_score++;
 					setTimeout("reborn()", 1000);
+				}
 				delElem(i);
 				if (i >= elems.length)
 					break;
@@ -222,6 +218,12 @@
 				}
 			}
 		}
+		cxt.font="20px VT323";
+		cxt.fillStyle = "white";
+		cxt.fillText("Score: "+(total_score*10), 0, 12);
+		if (total_score > best_score)
+			best_score = total_score;
+		cxt.fillText("Best : "+best_score*10, 0, 25);
 		// if(rect_y<=330){
 		// 	rect_y += 0.2;
 		// } else{
@@ -524,7 +526,7 @@
 			while(elems.length != 0)
 				elems.pop();
 			gameOverFlag = false;
-			total_score = -1;
+			total_score = 0;
 			for (i in monster_ready_record)
 				monster_ready[i] = monster_ready_record[i];
 			reborn();
