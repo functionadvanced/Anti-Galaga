@@ -25,14 +25,26 @@
 </head>
 <body style="height: 100%;width: 100%;margin: 0;padding: 0;">
 <h1>Anti-Galaga</h1>
-<canvas id="mCanvas" width="300" height="450"></canvas>
+<canvas id="mCanvas" width="300" height="400"></canvas>
+<button onclick="Attack(0)">A</button>
+<button onclick="Attack(1)">B</button>
+<button onclick="Attack(2)">C</button>
+<button onclick="Attack(3)">D</button>
 <script type="text/javascript">
 	var c=$("#mCanvas")[0];
 	var cxt=c.getContext("2d");
 	var img = new Image;
+	var invulnerableFlag = false;
+	function turnOnInv() {
+		invulnerableFlag = true;
+		setTimeout("turnOffInv()", 2000); // 2 sec invulnerable
+	}
+	function turnOffInv() {
+		invulnerableFlag = false;
+	}
 	img.src = "5355fd144740b.png";
 	img.onload = function() {
-		setInterval("draw()",200);
+		setInterval("draw()",5);
 	}
 	var kindImg = [
 		[3453, 4074, 0, 637], // fx, tx, fy, ty
@@ -48,14 +60,22 @@
 		[1530, 2300, 2057, 2237] // monster 8
 	];
 	var elems = [];
-	addElem(0, 137.5, 420, 25, 25, 5, 0);
-	addElem(3, 100, 0, 25, 25, 0, 0);
+	reborn();
 	//addElem(2, 100, 390, 5, 5, 0, 0);
+	function reborn() {
+		console.log("reborn");
+		turnOnInv();
+		addElem(0, 137.5, 375, 25, 25, 15, 0);
+	}
 	function draw() {
 		//draw
 		cxt.clearRect(0, 0, c.clientWidth, c.clientHeight);
 		for (i in elems) {
 			while (elems[i].delFlag){
+				// if (elems[i].kind == 0)
+				// 	setTimeout("reborn()", 500);
+				if (elems[i].kind == 0)
+					setTimeout("reborn()", 1000);
 				delElem(i);
 				if (i >= elems.length)
 					break;
@@ -73,6 +93,8 @@
 			for (j in elems) {
 				if (i == j)
 					continue;
+				if (elems[i].kind > 2 && elems[j].kind > 2)
+					continue;
 				if ((elems[i].kind == 1 && elems[j].kind <= 2) || (elems[j].kind == 1 && elems[i].kind <= 2))
 					continue;
 				if ((elems[i].kind == 2 && elems[j].kind != 0) || (elems[j].kind == 2 && elems[i].kind != 0))
@@ -80,11 +102,19 @@
 				if ((elems[i].pos.x >= elems[j].pos.x && elems[i].pos.x <= elems[j].pos.x+elems[j].pos.width)
 					|| (elems[i].pos.x+elems[i].pos.width >= elems[j].pos.x && elems[i].pos.x+elems[i].pos.width <= elems[j].pos.x+elems[j].pos.width)){
 					if ((elems[i].pos.y >= elems[j].pos.y && elems[i].pos.y <= elems[j].pos.y+elems[j].pos.height)
-					|| (elems[i].pos.y+elems[i].pos.height >= elems[j].pos.y && elems[i].pos.y+elems[i].pos.height <= elems[j].pos.x+elems[j].pos.height)){
+					|| (elems[i].pos.y+elems[i].pos.height >= elems[j].pos.y && elems[i].pos.y+elems[i].pos.height <= elems[j].pos.y+elems[j].pos.height)){
 						//console.log("collision");
-						console.log(elems[i].kind+"  "+elems[j].kind);
+						// console.log(elems[i].kind+"  "+elems[j].kind);
+						// console.log(elems[i]);
+						// console.log(elems[j]);
 						elems[i].delFlag = true;
 						elems[j].delFlag = true;
+						if (invulnerableFlag) {
+							if (elems[i].kind == 0)
+								elems[i].delFlag = false;
+							if (elems[j].kind == 0)
+								elems[j].delFlag = false;
+						}
 					}
 				}
 			}
@@ -112,9 +142,13 @@
 				dy: _dy
 			},
 			"delFlag": false,
-			"shootInterval": 5,
+			"shootInterval": 150,
 			AI: function(){
 				if (this.kind == 0) {// if this is the ship
+					if (invulnerableFlag) {
+						this.speed.dx = -this.speed.dx;
+						return;
+					}
 					checkFx = this.pos.x+40*this.speed.dx/Math.abs(this.speed.dx);
 					checkFy = this.pos.y-60;
 					checkTx = this.pos.x+this.pos.width/2+10*this.speed.dx/Math.abs(this.speed.dx);
@@ -128,7 +162,7 @@
 						temp2 = elems[ii].pos.x+elems[ii].pos.width/2 - checkTx;
 						temp3 = elems[ii].pos.y+elems[ii].pos.height/2 - checkFy;
 						temp4 = elems[ii].pos.y+elems[ii].pos.height/2 - checkTy;
-						console.log("1: "+temp1+" 2: "+temp2+" 3: "+temp3+" 4: "+temp4);
+						//console.log("1: "+temp1+" 2: "+temp2+" 3: "+temp3+" 4: "+temp4);
 						if (temp1 * temp2 < 0){
 							if (temp3 * temp4 < 0){
 								safeFlag = false;
@@ -136,8 +170,9 @@
 							}
 						}
 					}
-					if (this.pos.x < 0 || this.pos.x+this.pos.width > c.clientWidth)
+					if (this.pos.x <= 0 || this.pos.x+this.pos.width >= c.clientWidth){
 						safeFlag = false;
+					}
 					if (safeFlag){
 						//this.speed.dx = -Math.abs(this.speed.dx);
 						return;
@@ -161,7 +196,7 @@
 							}
 						}
 					}
-					console.log(safeFlag);
+					//console.log(safeFlag);
 					if (safeFlag){
 						this.speed.dx = -this.speed.dx;
 						return;
@@ -172,11 +207,14 @@
 				}
 			},
 			move: function(){
-
-				this.pos.x += this.speed.dx;
-				this.pos.y += this.speed.dy;
+				this.pos.x += this.speed.dx / 10;
+				this.pos.y += this.speed.dy / 10;
 				switch(this.kind) {
-					case 0: 
+					case 0:
+						if (this.pos.x < 0)
+							this.pos.x = 0;
+						if (this.pos.x > c.clientWidth-this.pos.width)
+							this.pos.x = c.clientWidth-this.pos.width;
 						break;
 					case 1: // bullet
 						if (this.pos.x < 0 || (c.clientWidth-this.pos.width-this.pos.x) < 0
@@ -198,13 +236,21 @@
 			},
 			shoot: function(){
 				this.shootInterval--;
+				if (this.kind == 0)
+					this.shootInterval -= 3;
 				if (this.shootInterval < 0){
 					if (this.kind == 0){
 						addElem(1, this.pos.x+this.pos.width/2-2.5, this.pos.y+this.pos.height/2, 5, 5, this.speed.dx, this.speed.dy-15);
+						addElem(1, this.pos.x+this.pos.width/2-2.5, this.pos.y+this.pos.height/2, 5, 5, this.speed.dx+15, this.speed.dy-15);
+						addElem(1, this.pos.x+this.pos.width/2-2.5, this.pos.y+this.pos.height/2, 5, 5, this.speed.dx-15, this.speed.dy-15);
+						addElem(1, this.pos.x+this.pos.width/2-2.5, this.pos.y+this.pos.height/2, 5, 5, this.speed.dx+5, this.speed.dy-15);
+						addElem(1, this.pos.x+this.pos.width/2-2.5, this.pos.y+this.pos.height/2, 5, 5, this.speed.dx-5, this.speed.dy-15);
+
 					}else{
 						addElem(2, this.pos.x+this.pos.width/2-2.5, this.pos.y+this.pos.height/2, 5, 5, this.speed.dx, this.speed.dy+15);
 					}
-					this.shootInterval = 10;
+					
+					this.shootInterval = 150;
 				}
 			}
 		};
@@ -214,6 +260,22 @@
 		elems.splice(_which, 1);
 	}
 
+	function Attack(_mode) {
+		switch(_mode){
+			case 0:	addElem(3, 100, 0, 25, 25, 1, 5); break;
+			case 1: 
+				addElem(4, 100, 100, 25, 25, 5, 0); 
+				addElem(4, 100, 100, 25, 25, -5, 0);
+
+				break;
+			case 2: 
+				addElem(5, 0, 0, 25, 25, 5, 2);
+				addElem(5, 200, 0, 25, 25, -5, 2);
+				break;
+			case 3: addElem(6, 200, 50, 25, 25, -5, 1); break;
+
+		}
+	}
 </script>
 </body>
 </html>
