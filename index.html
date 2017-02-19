@@ -33,7 +33,7 @@
 		}
 	</style>
 </head>
-<body style="height: 100%;width: 100%;margin: 0;padding: 0;" ontouchstart="mouse_down(event)" onmousedown="mouse_down(event)">
+<body style="height: 100%;width: 100%;margin: 0;padding: 0;" ontouchstart="touch_down(event)" onmousedown="mouse_down(event)">
 <h1><span style="color:yellow">A</span> <span style="color:red">n</span> <span style="color:green">t</span> <span style="color:blue">i</span> - G a l a g a</h1>
 <canvas id="mCanvas" width="300" height="400"></canvas>
 <canvas id="mCanvas2" width="300" height="100"></canvas>
@@ -104,6 +104,11 @@
 		RestartGame();
 		mouse_x = event.clientX + document.body.scrollLeft - c2.offsetLeft;
 		mouse_y = event.clientY + document.body.scrollTop - c2.offsetTop; 
+	}
+	function touch_down(event) {
+		RestartGame();
+		mouse_x = event.touches[0].clientX + document.body.scrollLeft - c2.offsetLeft;
+		mouse_y = event.touches[0].clientY + document.body.scrollTop - c2.offsetTop; 
 	}
 	var distance_to_end = 100;
 	function draw() {
