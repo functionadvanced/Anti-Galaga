@@ -56,11 +56,13 @@
 	var rect_y = 350;
 	var rect_wid = 5;
 	var rect_upbound = 50;
-	var line_x = 10;
-	var line_y = 10;
-	var monster_sq_width = 30; 
-	var charge_rate = new Array(5, 10, 15, 15, 10, 5);
-	var monster_ready = new Array(1,2,3,4,5,6);
+	var line_x = 3;
+	var line_y = 0;
+	var monster_sq_width = 40; 
+	var charge_rate = new Array(1, 1, 1, 1, 1, 1, 1);
+	var charge_speed = new Array(20, 17, 15, 13, 13, 10, 5);
+	var monster_ready = new Array(1,2,3,2,1,0,0);
+	var monster_max = new Array(10, 5, 4, 5, 2, 3, 1);
 	var mouse_x = 0;
 	var mouse_y = 0;
 
@@ -196,21 +198,23 @@
 		}
 		//canvas 2
 		if(rect_y>rect_upbound){
-			rect_y -= 0.1;
-		}  
-		cxt.fillStyle="#A4A4b1";
+			rect_y -= 0.01;
+		} else{
+			gameOverFlag = true; 
+			rect_y = 350;
+		} 
+		cxt.fillStyle="rgba(192,192,192,0.4)";  
 		cxt.fillRect(285,rect_y,rect_wid,350-rect_y); 
 		cxt.strokeStyle="white";
 		cxt.strokeRect(285,rect_upbound,rect_wid,300);
 		cxt.stroke(); 
-		cxt2.fillStyle = "#A4A4b1";  
+		cxt2.fillStyle = "rgba(255,255,255,0.3)";  
 		cxt2.strokeStyle="white";
 		var x_dist = 10; 
 		//for printing the number of ready monsters
-		cxt2.font = "10px Comic Sans MS";
-		cxt2.fillStyle = "white";
-		cxt2.textAlign = "center";
-		x_dist = 10; 
+		cxt2.font = "13px Comic Sans MS";
+		cxt2.fillStyle = "rgba(255,255,255,0.5)";  
+		cxt2.textAlign = "center"; 
 		//squres for monsters and clicks on monster
 		for(var i = 0; i<3; i++){
 			//release monsters
@@ -223,29 +227,47 @@
 				  	Attack(i);
 				} 
 			} else if(mouse_x >= line_x+x_dist && mouse_x <= line_x+x_dist+monster_sq_width
-				&& mouse_y >= line_y+45 && mouse_y <= line_y+45+monster_sq_width){ 
+				&& mouse_y >= line_y+55 && mouse_y <= line_y+55+monster_sq_width){ 
 				mouse_x = 0;
 				mouse_y = 0;
 				if(monster_ready[i+3] > 0 ){
 					monster_ready[i+3] -= 1;
 				  	Attack(i+3);
 				} 
-			}   
+			} else if(i == 2 && mouse_x >= line_x+x_dist+53 && mouse_x <= line_x+x_dist+53+monster_sq_width*2.9
+				&& mouse_y >= line_y+10 && mouse_y <= line_y+10+monster_sq_width*2.1) {
+				mouse_x = 0;
+				mouse_y = 0;
+				if(monster_ready[6] > 0 ){
+					monster_ready[6] -= 1;
+				  	Attack(6);
+				} 
+			} 
 			//draw squres
 			cxt2.strokeRect(line_x+x_dist,line_y+10,monster_sq_width,monster_sq_width); 
-			cxt2.strokeRect(line_x+x_dist,line_y+45,monster_sq_width,monster_sq_width);
+			cxt2.strokeRect(line_x+x_dist,line_y+55,monster_sq_width,monster_sq_width);
+			if(i == 2) cxt2.strokeRect(line_x+x_dist+53,line_y+10,monster_sq_width*2.9,monster_sq_width*2.1);
 			//draw the number of ready monsters 
-			cxt2.fillText(Math.floor(monster_ready[i]), line_x+x_dist+monster_sq_width-5,line_y+20);
-			cxt2.fillText(Math.floor(monster_ready[i+3]), line_x+x_dist+monster_sq_width-5,line_y+55);  
+			cxt2.fillText(Math.floor(monster_ready[i])+"/"+monster_max[i], line_x+x_dist+monster_sq_width-15.5,line_y+23);
+			cxt2.fillText(Math.floor(monster_ready[i+3])+"/"+monster_max[i], line_x+x_dist+monster_sq_width-15.5,line_y+68);
+			if(i == 2) cxt2.fillText(Math.floor(monster_ready[6])+"/"+monster_max[6], line_x+x_dist+53+monster_sq_width*2.9-14,line_y+23);
 			//draw energy charging
 			cxt2.fillRect(line_x+x_dist, line_y+10+monster_sq_width-charge_rate[i],monster_sq_width,charge_rate[i]);  
-			cxt2.fillRect(line_x+x_dist, line_y+45+monster_sq_width-charge_rate[i+3],monster_sq_width,charge_rate[i+3]); 
-			x_dist += 40;
+			cxt2.fillRect(line_x+x_dist, line_y+55+monster_sq_width-charge_rate[i+3],monster_sq_width,charge_rate[i+3]); 
+			if(i == 2) cxt2.fillRect(line_x+x_dist+53, line_y+10+monster_sq_width*2.1-charge_rate[6], monster_sq_width*2.9,charge_rate[6]); 
+			x_dist += 53;
 		}   
-		//refill energy for monsters
-		x_dist = 10; 
+		//refill energy for monsters 
 		for(var i = 0; i<charge_rate.length; i++){
-			charge_rate[i] += (i+1)*0.005;
+			if(monster_ready[i] >= monster_max[i])
+				continue;
+			charge_rate[i] += (charge_speed[i]+1)*0.003;
+			if(i == charge_rate.length-1){
+				if(charge_rate[i]>monster_sq_width*2.1-(line_y+10)){
+					monster_ready[i] += 1;
+					charge_rate[i] = 0;
+				} else{break;}
+			}
 			if(charge_rate[i]>monster_sq_width){
 				monster_ready[i] += 1;
 				charge_rate[i] = 0;
@@ -441,6 +463,7 @@
 				elems.pop();
 			gameOverFlag = false;
 			total_score = -1;
+
 			reborn();
 		}
 	}
