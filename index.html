@@ -538,16 +538,11 @@
 			bulletSound = new Audio("bullet.wav");
 			crashSound = new Audio("crash.wav");
 			buttonSound = new Audio("Button.wav");
-			try{
-				bulletSound.volume = 0.1;
-				buttonSound.volume = 0.5;
-				bulletSound.play();
-				crashSound.play();
-				buttonSound.play();
-			}
-			catch(e) {
-
-			}
+			bulletSound.volume = 0.1;
+			buttonSound.volume = 0.5;
+			bulletSound.play();
+			crashSound.play();
+			buttonSound.play();
 			reborn();
 			Has_start_flag = true;
 		}
